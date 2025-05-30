@@ -61,21 +61,56 @@ int watermark_jpeg(const char* input_file, const char* output_file,
 }
 
 int main(int argc, char *argv[]) {
-    if (argc != 4) {
-        printf("Usage: %s <input.jpg> <output.jpg> <watermark_text>\n", argv[0]);
-        printf("Example: %s image.jpg watermarked.jpg \"Copyright 2025\"\n", argv[0]);
+    if (argc < 3 || argc > 5) {
+        printf("Usage:\n");
+        printf("  Embed: %s embed <input.jpeg> <output.jpeg> <watermark_text>\n", argv[0]);
+        printf("  Extract: %s extract <watermarked.jpeg>\n", argv[0]);
+        printf("Example:\n");
+        printf("  %s embed input.jpeg watermarked.jpeg \"copyright\"\n", argv[0]);
+        printf("  %s extract watermarked.jpeg\n", argv[0]);
         return 1;
     }
     
-    const char *input_file = argv[1];
-    const char *output_file = argv[2];
-    const char *watermark = argv[3];
+    const char *operation = argv[1];
     
-    if (watermark_jpeg(input_file, output_file, watermark)) {
-        printf("Watermarking completed successfully!\n");
-        return 0;
-    } else {
-        printf("Watermarking failed!\n");
+    if (!strcmp(operation, "embed")) {
+        if (argc != 5) {
+            printf("Embed usage: %s embed <input.jpeg> <output.jpeg> <watermark_text>\n", argv[0]);
+            return 1;
+        }
+        
+        const char *input_file = argv[2];
+        const char *output_file = argv[3]; 
+        const char *watermark = argv[4];
+        
+        if (watermark_jpeg(input_file, output_file, watermark)) {
+            printf("Watermarking completed successfully!\n");
+            return 0;
+        } else {
+            printf("Watermarking failed!\n");
+            return 1;
+        }
+    }
+    else if (!strcmp(operation, "extract")) {
+        if (argc != 3) {
+            printf("Extract usage: %s extract <watermarked.jpeg>\n", argv[0]);
+            return 1;
+        }
+        
+        const char *input_file = argv[2];
+        char extracted_watermark[256];
+        
+        if (extract_watermark(input_file, extracted_watermark, 255)) {
+            printf("Extracted watermark: '%s'\n", extracted_watermark);
+            return 0;
+        } else {
+            printf("Failed to extract watermark!\n");
+            return 1;
+        }
+    }
+    else {
+        printf("Unknown operation: %s\n", operation);
+        printf("Use 'embed' or 'extract'\n");
         return 1;
     }
 }

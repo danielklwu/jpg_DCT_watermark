@@ -15,7 +15,7 @@ void string_to_binary(const char* str, char* binary) {
 }
 
 // Function to check if a block is valid for embedding based on the paper's method
-int check_block_validity(JBLOCK block, int location_set_idx, int bit_to_embed) {
+int check_write(JBLOCK block, int location_set_idx, int bit_to_embed) {
     int k1 = location_sets[location_set_idx][0][0];
     int l1 = location_sets[location_set_idx][0][1];
     int k2 = location_sets[location_set_idx][1][0]; 
@@ -36,14 +36,14 @@ int check_block_validity(JBLOCK block, int location_set_idx, int bit_to_embed) {
         int min_val = (abs_yq1 < abs_yq2) ? abs_yq1 : abs_yq2;
         return (min_val + MAX_MODIFICATION_MD >= abs_yq3);
     } else {
-        // For bit '0': check if MAX(|YQ(k1,l1)|, |YQ(k2,l2)|) + MD >= |YQ(k3,l3)|
+        // For bit '0': check if MAX(|YQ(k1,l1)|, |YQ(k2,l2)|) + MD <= |YQ(k3,l3)|
         int max_val = (abs_yq1 > abs_yq2) ? abs_yq1 : abs_yq2;
-        return (max_val + MAX_MODIFICATION_MD >= abs_yq3);
+        return (max_val <= abs_yq3 + MAX_MODIFICATION_MD);
     }
 }
 
-// Function to embed bit using the paper's three-coefficient relationship method
-void embed_bit_relationship(JBLOCK block, int location_set_idx, int bit) {
+// Function to embed bit using the three-coefficient relationship
+void write(JBLOCK block, int location_set_idx, int bit) {
     int k1 = location_sets[location_set_idx][0][0];
     int l1 = location_sets[location_set_idx][0][1];
     int k2 = location_sets[location_set_idx][1][0];
@@ -109,12 +109,13 @@ int embed_watermark(j_decompress_ptr cinfo, jvirt_barray_ptr *coef_arrays,
                 blocks_processed++;
                 
                 // Use simple round-robin selection of location sets for now
+                // Note: embedding blocks in order, could be easily cropped out.
                 int location_set_idx = blocks_processed % NUM_LOCATION_SETS;
                 int bit = binary_watermark[bit_index] - '0';
                 
                 // Check if block is valid for embedding this bit
-                if (check_block_validity(*block, location_set_idx, bit)) {
-                    embed_bit_relationship(*block, location_set_idx, bit);
+                if (check_write(*block, location_set_idx, bit)) {
+                    write(*block, location_set_idx, bit);
                     bit_index++;
                     valid_blocks++;
                     
@@ -123,6 +124,7 @@ int embed_watermark(j_decompress_ptr cinfo, jvirt_barray_ptr *coef_arrays,
                     }
                 } else {
                     // Block invalid
+                    printf("Invalid block found!\n");
                 }
             }
         }
