@@ -2,7 +2,7 @@
 CC = gcc
 CFLAGS = -I/opt/homebrew/include -I./inc -L/opt/homebrew/lib -ljpeg
 TARGET = main
-SRC = src/main.c src/read.c src/write.c src/embed.c src/extract.c
+SRC = main.c
 
 # Build the executable
 all: $(TARGET)
@@ -11,13 +11,7 @@ $(TARGET): $(SRC)
 	$(CC) $(SRC) -o $(TARGET) $(CFLAGS)
 
 run: $(TARGET)
-	./$(TARGET) input.jpeg watermarked.jpeg dkwu
-
-embed2: $(TARGET)
-	./$(TARGET) embed input2.jpeg watermarked.jpeg test
-
-extract2: $(TARGET)
-	./$(TARGET) extract watermarked.jpeg
+	./$(TARGET) 
 
 # Clean up (also removes all jpeg files not titled "input.jpeg")
 clean:
