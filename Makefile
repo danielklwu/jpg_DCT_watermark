@@ -22,12 +22,12 @@ $(TARGET): $(OBJS)
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) -c $< -o $@ $(CFLAGS)
 
-run: $(TARGET)
-	./$(TARGET) 
+test1: $(TARGET)
+	./$(TARGET) input1.jpg
 
 # Clean up (also removes all jpeg files not titled "input.jpeg")
 clean:
 	rm -f $(TARGET) src/*.o 
-	find . -type f \( -iname "*.jpeg" -o -iname "*.jpg" \) ! -name "input.jpeg" ! -name "input2.jpeg" -exec rm {} +
+	find . -type f \( -iname "*.jpeg" -o -iname "*.jpg" \) ! -name "input*.jpeg" ! -name "input*.jpg" -exec rm {} +
 
 .PHONY: all run clean

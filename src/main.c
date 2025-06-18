@@ -6,22 +6,36 @@
 #include "watermark.h"
 #include "attacks.h"
 
-#define TEST_ATTACKS 1
+#define TEST_ATTACKS 0
 
-int main() {
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        printf("Usage: %s <input_image>\n", argv[0]);
+        printf("Example: %s input1.jpg\n", argv[0]);
+        return 1;
+    }
+
     printf("DCT Watermarking Algorithm Demo\n");
     printf("=========================================\n\n");
     
     // Initialize DCT tables
     init_dct_tables();
     
-    // Create test image
+    // Load input image
+    char* filename = argv[1];
+    Image *original = load_jpeg(filename);
+    if (!original) {
+        printf("Error: Failed to load %s\n", filename);
+        return 1;
+    }
+    printf("Loaded input image: %dx%d pixels\n", original->width, original->height);
+
+    /* Create test image
     Image *original = create_image(256, 256);
     create_test_image(original);
     printf("Created test image: %dx%d pixels\n", original->width, original->height);
-    
-    // Save original test image
     save_jpeg(original, "original_test_image.jpg", 90);
+    */
     
     // Create a copy for watermarking
     Image *watermarked = copy_image(original);
