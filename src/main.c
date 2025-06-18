@@ -82,7 +82,7 @@ int main(int argc, char *argv[]) {
            similarity * 100, (int)(similarity * watermark_length), watermark_length);
 
 
-#ifdef TEST_ATTACKS
+#if TEST_ATTACKS
     
     // Test robustness with noise attack
     printf("\nTesting robustness with noise...\n");
@@ -143,18 +143,21 @@ int main(int argc, char *argv[]) {
     
     // Remove temporary file
     remove("temp_low_quality.jpg");
+    
+    free_image(noisy);
 #endif
     
     printf("\nGenerated files:\n");
-    printf("- original_test_image.jpg (original test image)\n");
+    // printf("- original_test_image.jpg (original test image)\n");
     printf("- watermarked_image.jpg (image with embedded watermark)\n");
+#if TEST_ATTACKS
     printf("- noisy_watermarked_image.jpg (watermarked image with noise)\n");
     printf("- jpeg_compressed_watermarked.jpg (watermarked image after JPEG compression)\n");
+#endif
     
     // Cleanup
     free_image(original);
     free_image(watermarked);
-    free_image(noisy);
     
     printf("\n=========================================\n");
     return 0;

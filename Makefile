@@ -25,6 +25,9 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 test1: $(TARGET)
 	./$(TARGET) input1.jpg
 
+test2: $(TARGET)
+	./$(TARGET) input2.jpeg
+
 # Clean up (also removes all jpeg files not titled "input.jpeg")
 clean:
 	rm -f $(TARGET) src/*.o 
