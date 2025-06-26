@@ -4,7 +4,7 @@
 #include "image.h"
 
 // Attack functions
-Image* attack_noise(Image* img, int noise_level);
-Image* attack_quality(Image* img, int quality);
+MyImage* attack_noise(MyImage* img, int noise_level);
+MyImage* attack_quality(MyImage* img, int quality);
 
 #endif /* ATTACKS_H */

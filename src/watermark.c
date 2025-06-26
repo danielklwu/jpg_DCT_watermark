@@ -3,6 +3,7 @@
 #include <math.h>
 #include "watermark.h"
 #include "dct.h"
+#include "image.h"
 
 void generate_sequence(int *sequence, int length, int seed) {
     srand(seed);
@@ -11,7 +12,7 @@ void generate_sequence(int *sequence, int length, int seed) {
     }
 }
 
-void embed_watermark(Image *img, char *watermark, int watermark_length, double alpha) {
+void embed_watermark(MyImage *img, char *watermark, int watermark_length, double alpha) {
     int blocks_x = img->width / BLOCK_SIZE;
     int blocks_y = img->height / BLOCK_SIZE;
     int total_blocks = blocks_x * blocks_y;
@@ -81,7 +82,7 @@ void embed_watermark(Image *img, char *watermark, int watermark_length, double a
     free(block_sequence);
 }
 
-void extract_watermark(Image *img, char *extracted_watermark, int watermark_length) {
+void extract_watermark(MyImage *img, char *extracted_watermark, int watermark_length) {
     int blocks_x = img->width / BLOCK_SIZE;
     int blocks_y = img->height / BLOCK_SIZE;
     int total_blocks = blocks_x * blocks_y;

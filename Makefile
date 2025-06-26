@@ -1,6 +1,8 @@
 # Compiler settings
 CC = gcc
-CFLAGS = -I/opt/homebrew/include -I./inc -L/opt/homebrew/lib -ljpeg -lm
+# CFLAGS = -I./inc $(shell pkg-config --cflags MagickWand)
+CFLAGS = -I./inc -I/opt/homebrew/include $(shell pkg-config --cflags MagickWand)
+LDFLAGS = -L/opt/homebrew/lib -ljpeg -lm $(shell pkg-config --libs MagickWand)
 SRC_DIR = src
 INC_DIR = inc
 OBJ_DIR = obj
@@ -17,7 +19,7 @@ $(shell mkdir -p $(OBJ_DIR))
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
-	$(CC) $(OBJS) -o $(TARGET) $(CFLAGS)
+	$(CC) $(OBJS) -o $(TARGET) $(LDFLAGS)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) -c $< -o $@ $(CFLAGS)
@@ -28,9 +30,12 @@ test1: $(TARGET)
 test2: $(TARGET)
 	./$(TARGET) input2.jpeg
 
+test3: $(TARGET)
+	./$(TARGET) input3.png
+
 # Clean up (also removes all jpeg files not titled "input.jpeg")
 clean:
-	rm -f $(TARGET) src/*.o 
-	find . -type f \( -iname "*.jpeg" -o -iname "*.jpg" \) ! -name "input*.jpeg" ! -name "input*.jpg" -exec rm {} +
+	rm -f $(TARGET) main.o obj/*.o
+	find . -type f \( -iname "*.jpeg" -o -iname "*.jpg" -o -iname "*.png" \) ! -name "input*" -exec rm {} +
 
 .PHONY: all run clean

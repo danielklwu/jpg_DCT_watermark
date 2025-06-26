@@ -7,17 +7,17 @@ typedef struct {
     unsigned char **data;
     int width;
     int height;
-} Image;
+} MyImage;
 
 // Image manipulation functions
-Image* create_image(int width, int height);
-void free_image(Image *img);
-Image* copy_image(Image *src);
-void add_noise(Image *img, int noise_level);
-void create_test_image(Image *img);
+MyImage* create_image(int width, int height);
+void free_image(MyImage *img);
+MyImage* copy_image(MyImage *src);
+void add_noise(MyImage *img, int noise_level);
+void create_test_image(MyImage *img);
 
 // JPEG operations
-int save_jpeg(Image *img, const char *filename, int quality);
-Image* load_jpeg(const char *filename);
+int save_jpeg(MyImage *img, const char *filename, int quality);
+MyImage* load_jpeg(const char *filename);
 
 #endif

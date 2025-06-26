@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include "attacks.h"
 
-Image* attack_noise(Image* img, int noise_level) {
-    Image* noisy = copy_image(img);
+MyImage* attack_noise(MyImage* img, int noise_level) {
+    MyImage* noisy = copy_image(img);
     
     srand(54321); // Fixed seed for reproducibility
     for (int i = 0; i < noisy->height; i++) {
@@ -19,7 +19,7 @@ Image* attack_noise(Image* img, int noise_level) {
     return noisy;
 }
 
-Image* attack_quality(Image* img, int quality) {
+MyImage* attack_quality(MyImage* img, int quality) {
     char temp_filename[] = "temp_low_quality.jpg";
     
     // Save with lower quality
@@ -28,7 +28,7 @@ Image* attack_quality(Image* img, int quality) {
     }
     
     // Reload the compressed image
-    Image* compressed = load_jpeg(temp_filename);
+    MyImage* compressed = load_jpeg(temp_filename);
     
     // Clean up temporary file
     remove(temp_filename);

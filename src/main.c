@@ -1,14 +1,11 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "image.h"
-#include "dct.h"
-#include "watermark.h"
-#include "attacks.h"
+#include "main.h"
+#include "convert.h"
 
-#define TEST_ATTACKS 0
+#define TEST_ATTACKS 1
 
 int main(int argc, char *argv[]) {
+    // printf("JPEG library version: %d\n", JPEG_LIB_VERSION);
+
     if (argc != 2) {
         printf("Usage: %s <input_image>\n", argv[0]);
         printf("Example: %s input1.jpg\n", argv[0]);
@@ -23,7 +20,28 @@ int main(int argc, char *argv[]) {
     
     // Load input image
     char* filename = argv[1];
-    Image *original = load_jpeg(filename);
+    // Detect input format
+    const char* ext = strrchr(filename, '.');
+    int is_jpg = 0;
+    char temp_jpeg[] = "__temp_input.jpg";
+    char temp_out_jpeg[] = "__temp_output.jpg";
+    char output_file[256];
+    char reconverted_file[256];
+    if (ext && (strcasecmp(ext+1, "jpg") == 0 || strcasecmp(ext+1, "jpeg") == 0)) {
+        is_jpg = 1;
+    }
+
+    MyImage *original = NULL;
+    if (is_jpg) {
+        original = load_jpeg(filename);
+    } else {
+        // Convert to JPEG for processing
+        original = convert_to_jpeg(filename, temp_jpeg);
+        if (!original) {
+            printf("Error: Could not convert %s to JPEG.\n", filename);
+            return 1;
+        }
+    }
     if (!original) {
         printf("Error: Failed to load %s\n", filename);
         return 1;
@@ -31,14 +49,14 @@ int main(int argc, char *argv[]) {
     printf("Loaded input image: %dx%d pixels\n", original->width, original->height);
 
     /* Create test image
-    Image *original = create_image(256, 256);
+    MyImage *original = create_image(256, 256);
     create_test_image(original);
     printf("Created test image: %dx%d pixels\n", original->width, original->height);
     save_jpeg(original, "original_test_image.jpg", 90);
     */
     
     // Create a copy for watermarking
-    Image *watermarked = copy_image(original);
+    MyImage *watermarked = copy_image(original);
     
     // Create watermark
     char watermark[] = "WATERMARK_TEST_123";
@@ -52,7 +70,20 @@ int main(int argc, char *argv[]) {
     printf("Watermark embedded successfully!\n");
     
     // Save watermarked image
-    save_jpeg(watermarked, "watermarked_image.jpg", 90);
+    if (is_jpg) {
+        save_jpeg(watermarked, "watermarked_image.jpg", 90);
+        strcpy(output_file, "watermarked_image.jpg");
+    } else {
+        save_jpeg(watermarked, temp_out_jpeg, 90);
+        // Reconvert to original format
+        snprintf(reconverted_file, sizeof(reconverted_file), "watermarked_image%s", ext);
+        if (!convert_from_jpeg(temp_out_jpeg, reconverted_file, ext+1)) {
+            printf("Error: Could not convert output JPEG to original format.\n");
+        } else {
+            printf("Output reconverted to original format: %s\n", reconverted_file);
+        }
+        strcpy(output_file, reconverted_file);
+    }
     
     // Extract watermark from watermarked image
     char extracted_watermark[(strlen(watermark) + 7) / 8 + 1];
@@ -86,7 +117,7 @@ int main(int argc, char *argv[]) {
     
     // Test robustness with noise attack
     printf("\nTesting robustness with noise...\n");
-    Image *noisy = attack_noise(watermarked, 10);
+    MyImage *noisy = attack_noise(watermarked, 10);
     
     // Save noisy image
     save_jpeg(noisy, "noisy_watermarked_image.jpg", 90);
@@ -114,7 +145,7 @@ int main(int argc, char *argv[]) {
     printf("\nTesting robustness with JPEG compression...\n");
     
     // Apply quality attack
-    Image *jpeg_compressed = attack_quality(watermarked, 50);
+    MyImage *jpeg_compressed = attack_quality(watermarked, 50);
     
     if (jpeg_compressed) {
         save_jpeg(jpeg_compressed, "jpeg_compressed_watermarked.jpg", 90);
@@ -158,6 +189,12 @@ int main(int argc, char *argv[]) {
     // Cleanup
     free_image(original);
     free_image(watermarked);
+    
+    // Cleanup temp files
+    if (!is_jpg) {
+        remove(temp_jpeg);
+        remove(temp_out_jpeg);
+    }
     
     printf("\n=========================================\n");
     return 0;

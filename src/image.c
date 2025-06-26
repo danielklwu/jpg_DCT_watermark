@@ -4,8 +4,8 @@
 #include <jpeglib.h>
 #include "image.h"
 
-Image* create_image(int width, int height) {
-    Image *img = (Image*)malloc(sizeof(Image));
+MyImage* create_image(int width, int height) {
+    MyImage *img = (MyImage*)malloc(sizeof(MyImage));
     img->width = width;
     img->height = height;
     
@@ -17,7 +17,7 @@ Image* create_image(int width, int height) {
     return img;
 }
 
-void free_image(Image *img) {
+void free_image(MyImage *img) {
     for (int i = 0; i < img->height; i++) {
         free(img->data[i]);
     }
@@ -25,15 +25,15 @@ void free_image(Image *img) {
     free(img);
 }
 
-Image* copy_image(Image *src) {
-    Image *dst = create_image(src->width, src->height);
+MyImage* copy_image(MyImage *src) {
+    MyImage *dst = create_image(src->width, src->height);
     for (int i = 0; i < src->height; i++) {
         memcpy(dst->data[i], src->data[i], src->width);
     }
     return dst;
 }
 
-void add_noise(Image *img, int noise_level) {
+void add_noise(MyImage *img, int noise_level) {
     srand(54321);
     for (int i = 0; i < img->height; i++) {
         for (int j = 0; j < img->width; j++) {
@@ -46,7 +46,7 @@ void add_noise(Image *img, int noise_level) {
     }
 }
 
-void create_test_image(Image *img) {
+void create_test_image(MyImage *img) {
     for (int i = 0; i < img->height; i++) {
         for (int j = 0; j < img->width; j++) {
             img->data[i][j] = (unsigned char)((i + j) % 256);
@@ -55,7 +55,7 @@ void create_test_image(Image *img) {
 }
 
 // JPEG functions implementation
-int save_jpeg(Image *img, const char *filename, int quality) {
+int save_jpeg(MyImage *img, const char *filename, int quality) {
     struct jpeg_compress_struct cinfo;
     struct jpeg_error_mgr jerr;
     FILE *outfile;
@@ -93,12 +93,12 @@ int save_jpeg(Image *img, const char *filename, int quality) {
     return 1;
 }
 
-Image* load_jpeg(const char *filename) {
+MyImage* load_jpeg(const char *filename) {
     struct jpeg_decompress_struct cinfo;
     struct jpeg_error_mgr jerr;
     FILE *infile;
     JSAMPARRAY buffer;
-    Image *img;
+    MyImage *img;
     
     if ((infile = fopen(filename, "rb")) == NULL) {
         printf("Error: Cannot open JPEG file %s\n", filename);
