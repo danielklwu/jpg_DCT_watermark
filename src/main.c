@@ -1,7 +1,9 @@
 #include "main.h"
 #include "convert.h"
 
-#define TEST_ATTACKS 1
+#define ENCODE 0
+#define EXTRACT 1
+#define TEST_ATTACKS 0
 
 int main(int argc, char *argv[]) {
     // printf("JPEG library version: %d\n", JPEG_LIB_VERSION);
@@ -63,6 +65,7 @@ int main(int argc, char *argv[]) {
     int watermark_length = strlen(watermark) * 8; // Convert to bits
     printf("Original watermark: \"%s\" (%d bits)\n", watermark, watermark_length);
     
+#if ENCODE    
     // Embed watermark
     double alpha = 50.0; // Embedding strength
     printf("Embedding watermark with strength alpha = %.1f\n", alpha);
@@ -84,6 +87,9 @@ int main(int argc, char *argv[]) {
         }
         strcpy(output_file, reconverted_file);
     }
+#endif
+
+#if EXTRACT
     
     // Extract watermark from watermarked image
     char extracted_watermark[(strlen(watermark) + 7) / 8 + 1];
@@ -111,7 +117,7 @@ int main(int argc, char *argv[]) {
     double similarity = calculate_similarity(watermark, extracted_watermark, watermark_length);
     printf("Bit-level similarity: %.2f%% (%d/%d bits match)\n", 
            similarity * 100, (int)(similarity * watermark_length), watermark_length);
-
+#endif
 
 #if TEST_ATTACKS
     
