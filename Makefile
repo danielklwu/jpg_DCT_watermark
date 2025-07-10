@@ -34,19 +34,17 @@ test3: $(TARGET)
 	./$(TARGET) input3.png
 
 test4: $(TARGET)
-	./$(TARGET) 000000.jpg
+	./$(TARGET) input4.jpg
 
-test_corrected: $(TARGET)
-	./$(TARGET) distorted_inputs/barrel_000000.jpg
-	./$(TARGET) corrected_outputs/barrel.jpg
-# ./$(TARGET) corrected_outputs/rotation.jpg
-# ./$(TARGET) corrected_outputs/barrel.jpg
+# remember to not embed/attack
+test_distortion: $(TARGET)
+	./$(TARGET) distorted_inputs/rotation_000000.jpg
 # ./$(TARGET) corrected_outputs/barrel.jpg
 
 
 # Clean up (also removes all jpeg files not titled "input.jpeg")
 clean:
 	rm -f $(TARGET) main.o obj/*.o
-#	find . -type f \( -iname "*.jpeg" -o -iname "*.jpg" -o -iname "*.png" \) ! -name "input*" -exec rm {} +
+	find . -maxdepth 1 -type f \( -iname "*.jpeg" -o -iname "*.jpg" -o -iname "*.png" \) ! -name "input*" -exec rm {} +
 
 .PHONY: all run clean

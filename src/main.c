@@ -1,9 +1,9 @@
 #include "main.h"
 #include "convert.h"
 
-#define ENCODE 0
+#define ENCODE 1
 #define EXTRACT 1
-#define TEST_ATTACKS 0
+#define TEST_ATTACKS 1
 
 int main(int argc, char *argv[]) {
     // printf("JPEG library version: %d\n", JPEG_LIB_VERSION);
@@ -64,6 +64,13 @@ int main(int argc, char *argv[]) {
     char watermark[] = "WATERMARK_TEST_123";
     int watermark_length = strlen(watermark) * 8; // Convert to bits
     printf("Original watermark: \"%s\" (%d bits)\n", watermark, watermark_length);
+    printf("Watermark in bits: ");
+    for (int i = 0; i < strlen(watermark); i++) {
+        for (int j = 7; j >= 0; j--) {
+            printf("%d", (watermark[i] >> j) & 1);
+        }
+    }
+    printf("\n");
     
 #if ENCODE    
     // Embed watermark
