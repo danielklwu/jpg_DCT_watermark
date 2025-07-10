@@ -4,6 +4,7 @@
 #include "watermark.h"
 #include "dct.h"
 #include "image.h"
+#include <stdio.h>
 
 void generate_sequence(int *sequence, int length, int seed) {
     srand(seed);
@@ -132,16 +133,21 @@ void extract_watermark(MyImage *img, char *extracted_watermark, int watermark_le
 double calculate_similarity(char *watermark1, char *watermark2, int length) {
     int matches = 0;
     int total_bits = 0;
+
+    printf("Extracted watermark in bits: ");
     
     for (int i = 0; i < (length + 7) / 8; i++) {
         for (int j = 0; j < 8 && total_bits < length; j++) {
             int bit1 = (watermark1[i] >> (7 - j)) & 1;
             int bit2 = (watermark2[i] >> (7 - j)) & 1;
+
+            printf("%d", bit2);
             
             if (bit1 == bit2) matches++;
             total_bits++;
         }
     }
+    printf("\n");
     
     return (double)matches / total_bits;
 }

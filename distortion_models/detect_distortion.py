@@ -179,7 +179,7 @@ class DistortionDetector:
 def main():
     parser = argparse.ArgumentParser(description='Detect geometric distortion in images')
     parser.add_argument('--image', required=True, help='Path to input image')
-    parser.add_argument('--model_dir', help='Directory containing pretrained models')
+    parser.add_argument('--model_dir', default='geoProjModels', help='Directory containing pretrained models')
     parser.add_argument('--batch', nargs='+', help='Multiple image paths for batch processing')
     parser.add_argument('--probabilities', action='store_true', 
                        help='Show probability distribution for all distortion types')

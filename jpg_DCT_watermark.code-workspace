@@ -1,0 +1,15 @@
+{
+	"folders": [
+		{
+			"name": "jpg_DCT_watermark",
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"jpeglib.h": "c",
+			"main.h": "c",
+			"convert.h": "c"
+		}
+	}
+}
