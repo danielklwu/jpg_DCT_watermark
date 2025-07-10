@@ -3,6 +3,10 @@
 #include <string.h>
 #include <jpeglib.h>
 #include <jerror.h>
+#include "image.h"
+#include "dct.h"
+#include "watermark.h"
+#include "attacks.h"
 
 // Holds DCT coefficient arrays
 typedef struct {
@@ -27,18 +31,3 @@ static const int location_sets[NUM_LOCATION_SETS][3][2] = {
     {{1,1}, {2,0}, {0,2}},  // Set 7
     {{2,0}, {1,1}, {0,2}}   // Set 8
 };
-
-// main.c
-void cleanup_dct_data(dct_data_t *dct_data);
-
-// read.c
-dct_data_t* read_jpeg_dct(const char* filename);
-
-// write.c
-int write_jpeg_dct(dct_data_t *dct_data, const char* filename);
-
-// embed.c
-int embed_watermark(j_decompress_ptr cinfo, jvirt_barray_ptr *coef_arrays, const char* watermark);
-
-// extract.c
-int extract_watermark(const char* filename, char* watermark, int max_chars);
